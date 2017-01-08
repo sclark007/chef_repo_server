@@ -1,3 +1,9 @@
+
+[![Build Status](https://img.shields.io/travis/sclark007/chef_repo_server.svg)](https://travis-ci.org/sclark007/chef_repo_server)
+[![Code Climate](https://codeclimate.com/github/sclark007/chef_repo_server/badges/gpa.svg)](https://codeclimate.com/github/sclark007/chef_repo_server)
+[![Coverage Status](https://img.shields.io/coveralls/sclark007/chef_repo_server.svg)](https://coveralls.io/github/sclark007/chef_repo_server)
+
+
 chef_repo_server
 ================
 
