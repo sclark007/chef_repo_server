@@ -1,0 +1,48 @@
+# encoding: utf-8
+# Cookbook Name:: chef_repo_server
+# Recipe:: default
+#
+#
+# Author:: Steve Clark <steve@bigsteve.us>
+# Copyright (c) 2016 Steve Clark
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# This is the main configuration file for your RubyGems mirror. Here you can
+# change settings such as the location to store Gem files in and what sources
+# and Gems you'd like to mirror.
+GemMirror.configuration.configure do
+  # The directory to store indexing information as well as the Gem files in.
+  destination File.expand_path('../public', __FILE__)
+
+  # Directory to use for storing SHA512 checksums of each Gem.
+  checksums File.expand_path('../public/checksums', __FILE__)
+
+  # When set to `true` development dependencies of Gems will also be mirrored.
+  development false
+
+  # If you're mirroring a lot of Gems you'll probably want to switch the
+  # logging level to Logger::ERROR or Logger::INFO to reduce the amount of
+  # noise.
+  logger.level = Logger::DEBUG
+
+  # A source is a remote location that you want to mirror. The first parameter
+  # of this method is the human readable name, the second one the URL. The
+  # supplied block is used to determine what Gems (and versions) to mirror.
+  source 'rubygems', 'https://rubygems.org' do
+    <% @packages.map do |p,v| -%>
+    gem <%= "'#{p}', '#{v}' "  %>
+    <% end -%>
+  end
+end

@@ -1,0 +1,26 @@
+---
+driver:
+  name: vagrant
+  network:
+    - ["forwarded_port", {guest: 443, host: 8443}]
+    - ["forwarded_port", {guest: 9443, host: 9443}]
+
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: centos-7.2
+
+suites:
+  - name: default
+    run_list:
+      - recipe[chef_repo_server]
+    verifier:
+      inspec_tests:
+        - test/recipes
+    attributes:
+      chef_repo_server:
+        common_name: '127.0.0.1'
