@@ -39,8 +39,6 @@ end
 def path
   "/etc/reposync.repos.d/#{repo_name}.repo"
 end
-
-# rubocop:disable Metrics/BlockLength
 action :create do
   directory '/etc/reposync.repos.d/' do
     owner 'root'

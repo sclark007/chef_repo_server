@@ -18,7 +18,7 @@
 # rpms needed for creating a yum repo
 default['chef_repo_server']['rpms'] = [
   'createrepo',
-  'yum-utils'
+  'yum-utils',
 ]
 
 # install lastest version of gems
@@ -30,7 +30,7 @@ default['chef_repo_server']['gems'] = {
   'mixlib-install' => '~> 2.1',
   'rake' => '~> 12.0',
   'stove' => '~> 4.1',
-  'chef-dk' => '~> 1.1'
+  'chef-dk' => '~> 1.1',
 }
 
 default['chef_repo_server']['basepath'] = '/repos'

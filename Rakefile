@@ -1,57 +1,69 @@
-# encoding: utf-8
+#!/usr/bin/env rake
 
-require 'foodcritic'
-require 'rspec/core/rake_task'
-require 'rubocop/rake_task'
+# require_relative 'tasks/maintainers'
 
-# General tasks
-desc 'Run ChefSpec examples'
-RSpec::Core::RakeTask.new(:spec)
+# Style tests. cookstyle (rubocop) and Foodcritic
+namespace :style do
+  begin
+    require 'cookstyle'
+    require 'rubocop/rake_task'
 
-# Rubocop before rspec so we don't lint vendored cookbooks
-desc 'Run all tests except Kitchen (default task)'
-task integration: %w(rubocop foodcritic)
-task default: [:integration]
+    desc 'Run Ruby style checks'
+    RuboCop::RakeTask.new(:ruby)
+  rescue LoadError => e
+    puts ">>> Gem load error: #{e}, omitting #{task.name}" unless ENV['CI']
+  end
 
-# Lint the cookbook
-desc 'Run linters'
-task lint: [:rubocop, :foodcritic]
+  begin
+    require 'foodcritic'
 
-# Lint the cookbook
-desc 'Run all linters: rubocop and foodcritic'
-task run_all_linters: [:rubocop, :foodcritic]
-
-# Run the whole shebang
-desc 'Run all tests'
-task test: [:lint, :integration, :acceptance]
-
-# Foodcritic
-desc 'Run foodcritic lint checks'
-task :foodcritic do
-  if Gem::Version.new('1.9.2') <= Gem::Version.new(RUBY_VERSION.dup)
-    puts 'Running Foodcritic tests...'
-    FoodCritic::Rake::LintTask.new do |t|
-      t.options = { fail_tags: ['any'] }
-      puts 'done.'
+    desc 'Run Chef style checks'
+    FoodCritic::Rake::LintTask.new(:chef) do |t|
+      t.options = {
+        fail_tags: ['any'],
+        progress: true,
+      }
     end
-  else
-    puts "WARN: foodcritic run is skipped as Ruby #{RUBY_VERSION} is < 1.9.2."
+  rescue LoadError => e
+    puts ">>> Gem load error: #{e}, omitting #{task.name}" unless ENV['CI']
   end
 end
 
-# Rubocop
-desc 'Run Rubocop lint checks'
-task :rubocop do
-  RuboCop::RakeTask.new
-end
+desc 'Run all style checks'
+task style: ['style:chef', 'style:ruby']
 
+# ChefSpec
 begin
-  require 'kitchen/rake_tasks'
-  Kitchen::RakeTasks.new
+  require 'rspec/core/rake_task'
 
-  desc 'Alias for kitchen:all'
-  task acceptance: 'kitchen:all'
-
+  desc 'Run ChefSpec examples'
+  RSpec::Core::RakeTask.new(:spec)
 rescue LoadError
-  puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
+  puts ">>> Gem load error: #{e}, omitting #{task.name}" unless ENV['CI']
 end
+
+# Integration tests. Kitchen.ci
+namespace :integration do
+  begin
+    require 'kitchen/rake_tasks'
+
+    desc 'Run kitchen integration tests'
+    Kitchen::RakeTasks.new
+  rescue StandardError => e
+    puts ">>> Gem load error: #{e}, omitting #{task.name}" unless ENV['CI']
+  end
+end
+
+namespace :supermarket do
+  begin
+    require 'stove/rake_task'
+
+    desc 'Publish cookbook to Supermarket with Stove'
+    Stove::RakeTask.new
+  rescue LoadError => e
+    puts ">>> Gem load error: #{e}, omitting #{task.name}" unless ENV['CI']
+  end
+end
+
+# Default
+task default: %w(style spec)
