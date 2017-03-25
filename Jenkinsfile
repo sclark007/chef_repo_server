@@ -1,10 +1,5 @@
 #!/usr/bin/env groovy
 
-/**
- * Jenkinsfile for Chef cookbook for EOS
- * from https://github.com/aristanetworks/chef-eos/edit/develop/Jenkinsfile
- */
-
 node('master') {
 
     currentBuild.result = "SUCCESS"
@@ -50,7 +45,7 @@ node('master') {
 
             sh """
                 eval "\$(chef shell-init bash)"
-                chef exec delivery local Unittest
+                chef exec delivery local unit
             """
 
             step([$class: 'JUnitResultArchiver', testResults: 'result.xml'])
