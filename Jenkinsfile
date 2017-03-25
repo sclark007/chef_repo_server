@@ -5,7 +5,7 @@
  * from https://github.com/aristanetworks/chef-eos/edit/develop/Jenkinsfile
  */
 
-node('vagrant') {
+node('master') {
 
     currentBuild.result = "SUCCESS"
 
