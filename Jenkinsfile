@@ -69,19 +69,19 @@ node('master') {
 
             echo 'Cleanup'
 
-            step([$class: 'WarningsPublisher',
-                  canComputeNew: false,
-                  canResolveRelativePaths: false,
-                  consoleParsers: [
-                                   [parserName: 'Rubocop'],
-                                   [parserName: 'Foodcritic']
-                                  ],
-                  defaultEncoding: '',
-                  excludePattern: '',
-                  healthy: '',
-                  includePattern: '',
-                  unHealthy: ''
-            ])
+            // step([$class: 'WarningsPublisher',
+            //       canComputeNew: false,
+            //       canResolveRelativePaths: false,
+            //       consoleParsers: [
+            //                        [parserName: 'Rubocop'],
+            //                        [parserName: 'Foodcritic']
+            //                       ],
+            //       defaultEncoding: '',
+            //       excludePattern: '',
+            //       healthy: '',
+            //       includePattern: '',
+            //       unHealthy: ''
+            // ])
 
            mail body: "${env.BUILD_URL} build successful.\n" +
                       "Started by ${env.BUILD_CAUSE}",
