@@ -43,13 +43,16 @@ node('master') {
 
         stage ('ChefSpec Unittest') {
 
-            sh """
-                eval "\$(chef shell-init bash)"
-                chef exec delivery local unit
-            """
-
-            step([$class: 'JUnitResultArchiver', testResults: 'result.xml'])
-
+            try {
+                sh """
+                    eval "\$(chef shell-init bash)"
+                    chef exec delivery local unit
+                """
+            }
+            catch (Exception err) {
+                currentBuild.result = "UNSTABLE"
+            }
+            echo "RESULT: ${currentBuild.result}"
         }
 
         stage ('TestKitchen integration') {
